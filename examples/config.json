@@ -1,0 +1,23 @@
+{
+  "threadCount": 3,
+  "tasks": [
+   {
+      "tag": "PS4 avito",
+      "module": "avito",
+      "search": "/irkutsk/igry_pristavki_i_programmy?cd=10&q=ps4",
+      "tgChannelId": "",
+      "tgBotKey": "",
+      "description": "Поиск PS4",
+      "database": "sqlite:///database.db"
+    },
+    {
+      "tag": "PS4 youla",
+      "module": "youla",
+      "search": "/irkutsk/hobbi-razvlecheniya/konsoli-igry?attributes[price][from]=500000&attributes[price][to]=1600000&q=ps4",
+      "tgChannelId": "",
+      "tgBotKey": "",
+      "description": "Поиск PS4 на юле",
+      "database": "sqlite:///database.db"
+    }
+  ]
+}
