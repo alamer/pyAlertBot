@@ -1,5 +1,6 @@
 #  -*- coding: utf-8 -*-
 import json
+import sys
 from multiprocessing.dummy import Pool as ThreadPool
 
 from avito import grab as avito_grab
@@ -16,7 +17,12 @@ def grab(task):
         print("Module {} not found.".format(task["module"]))
 
 
-with open("config.json", mode="r", encoding="utf-8") as f:
+if len(sys.argv) == 1:
+    print("Configuration file not provided")
+    quit()
+configuration_file=sys.argv[1]
+print("Configuration file: {}".format(configuration_file))
+with open(configuration_file, mode="r", encoding="utf-8") as f:
     configurationStr = f.read()
 # Загружаем файл конфигурации
 configuration = json.loads(configurationStr)
