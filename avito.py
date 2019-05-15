@@ -69,9 +69,9 @@ def grab(task):
                 print("ID: {} link: {} price: {}".format(avitoRecord['id'], avitoRecord['link'], avitoRecord['price']))
                 message = check_record(db, avitoRecord)
                 if message != None:
-                    formated_message = "{} {} price: {}".format(message['icon'], avitoRecord['link'],
+                    formatted_message = "{} {} price: {}".format(message['icon'], avitoRecord['link'],
                                                                 avitoRecord['price'])
                     #print(formated_message)
-                    send_message(task["tgBotKey"], task["tgChannelId"], message)
+                    send_message(task["tgBotKey"], task["tgChannelId"], formatted_message)
         else:
             print("Empty link for {}".format(itemId))
