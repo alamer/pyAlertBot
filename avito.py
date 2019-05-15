@@ -81,22 +81,23 @@ def grab(task):
                     if 'oldPrice' in message:
                         count_change += 1
                         formatted_message = "{}{}  \n{}  \n💰 {}₽ -> {}  \n🔗[Перейти]({})".format(message['icon'],
-                                                                                    message['message'],
-                                                                                    item_name,
-                                                                                    avito_record['price'],
-                                                                                    message['oldPrice'],
-                                                                                    avito_record['link'],
-                                                                                    )
+                                                                                                   message['message'],
+                                                                                                   item_name,
+                                                                                                   message['oldPrice'],
+                                                                                                   avito_record[
+                                                                                                       'price'],
+                                                                                                   avito_record['link'],
+                                                                                                   )
                         print(formatted_message)
                         send_message(task["tgBotKey"], task["tgChannelId"], formatted_message)
                     else:
                         count_new += 1
                         formatted_message = "{}{}  \n{}  \n💰 {}₽  \n🔗[Перейти]({})".format(message['icon'],
-                                                                                    message['message'],
-                                                                                    item_name,
-                                                                                    avito_record['price'],
-                                                                                    avito_record['link'],
-                                                                                    )
+                                                                                             message['message'],
+                                                                                             item_name,
+                                                                                             avito_record['price'],
+                                                                                             avito_record['link'],
+                                                                                             )
                         print(formatted_message)
                         send_message(task["tgBotKey"], task["tgChannelId"], formatted_message)
         else:
