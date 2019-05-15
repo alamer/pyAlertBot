@@ -1,4 +1,4 @@
-#import logging
+# import logging
 import os
 import urllib.request
 
@@ -6,10 +6,10 @@ import telebot
 
 
 def send_message(token, chat, text, method='sendMessage'):
-    #logger = telebot.logger
-    #telebot.logger.setLevel(logging.DEBUG)  # Outputs debug messages to console.
+    # logger = telebot.logger
+    # telebot.logger.setLevel(logging.DEBUG)  # Outputs debug messages to console.
     bot = telebot.TeleBot(token)
-    bot.send_message(chat, text)
+    bot.send_message(chat, text, parse_mode="markdown")
 
 
 def send_message_image(token, chat, url, message, method='sendMessage'):

@@ -64,34 +64,40 @@ def grab(task):
         item_id = mainItemDiv['id']
         href_tag = mainItemDiv.find('a', 'item-description-title-link')
         if href_tag is not None:
-            item_link = href_tag.get('href')
             price_tag = mainItemDiv.find('span', 'price')
             if price_tag is not None:
+                item_name = href_tag.get('title')
                 item_price = price_tag.get('content')
                 # Нашли цену и url, можем писать в базу
                 count_all += 1
                 avito_record = dict()
                 avito_record['tag'] = tag
                 avito_record['id'] = item_id
-                avito_record['link'] = base_url + item_link
+                item_link = base_url + href_tag.get('href')
+                avito_record['link'] = item_link
                 avito_record['price'] = item_price
                 message = check_record(db, avito_record)
                 if message is not None:
                     if 'oldPrice' in message:
                         count_change += 1
-                        formatted_message = "{}{} {} price: {} -> {}".format(message['icon'], message['message'],
-                                                                             avito_record['link'],
-                                                                             message['oldPrice'],
-                                                                             avito_record['price'])
-                        #print(formatted_message)
+                        formatted_message = "{}{}  \n{}  \n💰 {}₽ -> {}  \n🔗[Перейти]({})".format(message['icon'],
+                                                                                    message['message'],
+                                                                                    item_name,
+                                                                                    avito_record['price'],
+                                                                                    message['oldPrice'],
+                                                                                    avito_record['link'],
+                                                                                    )
+                        print(formatted_message)
                         send_message(task["tgBotKey"], task["tgChannelId"], formatted_message)
-                        pass
                     else:
                         count_new += 1
-                        formatted_message = "{}{} {} price: {}".format(message['icon'], message['message'],
-                                                                       avito_record['link'],
-                                                                       avito_record['price'])
-                        #print(formatted_message)
+                        formatted_message = "{}{}  \n{}  \n💰 {}₽  \n🔗[Перейти]({})".format(message['icon'],
+                                                                                    message['message'],
+                                                                                    item_name,
+                                                                                    avito_record['price'],
+                                                                                    avito_record['link'],
+                                                                                    )
+                        print(formatted_message)
                         send_message(task["tgBotKey"], task["tgChannelId"], formatted_message)
         else:
             print("Empty link for {}".format(item_id))
