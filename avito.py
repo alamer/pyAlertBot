@@ -28,10 +28,16 @@ def check_record(db, avito_record):
             res = {'message': "New", 'icon': '✅'}
         elif int(rows[0]['price']) > int(avito_record['price']):
             # item changed, price down
-            res = {'message': "Price down", 'icon': '👍'}
+            conn.query("update AVITO set price='{}' where tag='{}' and id='{}'".format(avito_record['price'],
+                                                                                       avito_record['tag'],
+                                                                                       avito_record['id']))
+            res = {'message': "Price down", 'icon': '👍', 'oldPrice': rows[0]['price']}
         elif int(rows[0]['price']) < int(avito_record['price']):
             # item changed, price up
-            res = {'message': "Price up", 'icon': '👎'}
+            conn.query("update AVITO set price='{}' where tag='{}' and id='{}'".format(avito_record['price'],
+                                                                                       avito_record['tag'],
+                                                                                       avito_record['id']))
+            res = {'message': "Price up", 'icon': '👎', 'oldPrice': rows[0]['price']}
         else:
             # price not changed
             res = None
@@ -51,6 +57,9 @@ def grab(task):
     content = result.content
     soup = BeautifulSoup(content, "html.parser")
     main_item_div_list = soup.find_all('div', "item")
+    count_all = 0
+    count_new = 0
+    count_change = 0
     for mainItemDiv in main_item_div_list:
         item_id = mainItemDiv['id']
         href_tag = mainItemDiv.find('a', 'item-description-title-link')
@@ -60,18 +69,31 @@ def grab(task):
             if price_tag is not None:
                 item_price = price_tag.get('content')
                 # Нашли цену и url, можем писать в базу
+                count_all += 1
                 avito_record = dict()
                 avito_record['tag'] = tag
                 avito_record['id'] = item_id
                 avito_record['link'] = base_url + item_link
                 avito_record['price'] = item_price
-                print(
-                    "ID: {} link: {} price: {}".format(avito_record['id'], avito_record['link'], avito_record['price']))
                 message = check_record(db, avito_record)
                 if message is not None:
-                    formatted_message = "{} {} price: {}".format(message['icon'], avito_record['link'],
-                                                                 avito_record['price'])
-                    # print(formated_message)
-                    send_message(task["tgBotKey"], task["tgChannelId"], formatted_message)
+                    if message['oldPrice'] is not None:
+                        count_change += 1
+                        formatted_message = "{}{} {} price: {} -> {}".format(message['icon'], message['message'],
+                                                                             avito_record['link'],
+                                                                             message['oldPrice'],
+                                                                             avito_record['price'])
+                        #print(formatted_message)
+                        send_message(task["tgBotKey"], task["tgChannelId"], formatted_message)
+                        pass
+                    else:
+                        count_new += 1
+                        formatted_message = "{}{} {} price: {}".format(message['icon'], message['message'],
+                                                                       avito_record['link'],
+                                                                       avito_record['price'])
+                        #print(formatted_message)
+                        send_message(task["tgBotKey"], task["tgChannelId"], formatted_message)
         else:
             print("Empty link for {}".format(item_id))
+
+    print("Total: {} new: {} changed: {}".format(count_all, count_new, count_change))
