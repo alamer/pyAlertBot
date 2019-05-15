@@ -4,7 +4,7 @@ import requests
 from bs4 import BeautifulSoup
 from fake_useragent import UserAgent
 
-from alert.tg import send_message
+from tg import send_message
 
 
 def prepare_db(link):

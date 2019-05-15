@@ -3,14 +3,15 @@ import requests
 from bs4 import BeautifulSoup
 from fake_useragent import UserAgent
 
-from alert.tg import send_message
+from tg import send_message
 
 
 def prepare_db(link):
     db = records.Database(link)
-    conn=db.get_connection()
+    conn = db.get_connection()
     with conn:
-        conn.query('Create table if not exists AVITO (tag VARCHAR(255),id VARCHAR(255),link VARCHAR(255),price VARCHAR(20))')
+        conn.query(
+            'Create table if not exists AVITO (tag VARCHAR(255),id VARCHAR(255),link VARCHAR(255),price VARCHAR(20))')
     return db
 
 
@@ -18,13 +19,23 @@ def check_record(db, avito_record):
     conn = db.get_connection()
     with conn:
         rows = conn.query(
-            "select id from AVITO where tag='{}' and id='{}' and price='{}'".format(avito_record['tag'], avito_record['id'],
-                                                                                    avito_record['price']), fetchall=True)
+            "select price from AVITO where tag='{}' and id='{}'".format(avito_record['tag'], avito_record['id']),
+            fetchall=True)
         if len(rows) == 0:
-            # Пишем в базу
+            # new item
             conn.query("insert into AVITO (tag,id,link,price) values('{}','{}','{}','{}')"
-                     .format(avito_record['tag'], avito_record['id'], avito_record['link'], avito_record['price']))
-    return len(rows)
+                       .format(avito_record['tag'], avito_record['id'], avito_record['link'], avito_record['price']))
+            res = {'message': "New", 'icon': '✅'}
+        elif int(rows[0]['price']) > int(avito_record['price']):
+            # item changed, price down
+            res = {'message': "Price down", 'icon': '👍'}
+        elif int(rows[0]['price']) < int(avito_record['price']):
+            # item changed, price up
+            res = {'message': "Price up", 'icon': '👎'}
+        else:
+            # price not changed
+            res = None
+    return res
 
 
 def grab(task):
@@ -56,9 +67,11 @@ def grab(task):
                 avitoRecord['link'] = baseUrl + itemLink
                 avitoRecord['price'] = itemPrice
                 print("ID: {} link: {} price: {}".format(avitoRecord['id'], avitoRecord['link'], avitoRecord['price']))
-                if check_record(db, avitoRecord) == 0:
-                    print("new record")
-                    message = "{} price: {}".format(baseUrl + itemLink, itemPrice)
+                message = check_record(db, avitoRecord)
+                if message != None:
+                    formated_message = "{} {} price: {}".format(message['icon'], avitoRecord['link'],
+                                                                avitoRecord['price'])
+                    #print(formated_message)
                     send_message(task["tgBotKey"], task["tgChannelId"], message)
         else:
             print("Empty link for {}".format(itemId))

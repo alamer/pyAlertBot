@@ -2,8 +2,8 @@
 import json
 from multiprocessing.dummy import Pool as ThreadPool
 
-from alert.avito import grab as avito_grab
-from alert.youla import grab as youla_grab
+from avito import grab as avito_grab
+from youla import grab as youla_grab
 
 
 def grab(task):
