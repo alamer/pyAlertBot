@@ -45,33 +45,33 @@ def grab(task):
     print(header)
     db = prepare_db(task["database"])
     tag = task["tag"]
-    baseUrl = "https://www.avito.ru"
-    searchUrl = task["search"]
-    result = requests.get(baseUrl + searchUrl, headers=header)
+    base_url = "https://www.avito.ru"
+    search_url = task["search"]
+    result = requests.get(base_url + search_url, headers=header)
     content = result.content
     soup = BeautifulSoup(content, "html.parser")
-    itemTable = soup.find('div', 'catalog-list')
-    mainItemDivList = soup.find_all('div', "item")
-    for mainItemDiv in mainItemDivList:
-        itemId = mainItemDiv['id']
-        hrefTag = mainItemDiv.find('a', 'item-description-title-link')
-        if hrefTag != None:
-            itemLink = hrefTag.get('href')
-            priceTag = mainItemDiv.find('span', 'price')
-            if priceTag != None:
-                itemPrice = priceTag.get('content')
+    main_item_div_list = soup.find_all('div', "item")
+    for mainItemDiv in main_item_div_list:
+        item_id = mainItemDiv['id']
+        href_tag = mainItemDiv.find('a', 'item-description-title-link')
+        if href_tag is not None:
+            item_link = href_tag.get('href')
+            price_tag = mainItemDiv.find('span', 'price')
+            if price_tag is not None:
+                item_price = price_tag.get('content')
                 # Нашли цену и url, можем писать в базу
-                avitoRecord = dict()
-                avitoRecord['tag'] = tag
-                avitoRecord['id'] = itemId
-                avitoRecord['link'] = baseUrl + itemLink
-                avitoRecord['price'] = itemPrice
-                print("ID: {} link: {} price: {}".format(avitoRecord['id'], avitoRecord['link'], avitoRecord['price']))
-                message = check_record(db, avitoRecord)
-                if message != None:
-                    formatted_message = "{} {} price: {}".format(message['icon'], avitoRecord['link'],
-                                                                avitoRecord['price'])
-                    #print(formated_message)
+                avito_record = dict()
+                avito_record['tag'] = tag
+                avito_record['id'] = item_id
+                avito_record['link'] = base_url + item_link
+                avito_record['price'] = item_price
+                print(
+                    "ID: {} link: {} price: {}".format(avito_record['id'], avito_record['link'], avito_record['price']))
+                message = check_record(db, avito_record)
+                if message is not None:
+                    formatted_message = "{} {} price: {}".format(message['icon'], avito_record['link'],
+                                                                 avito_record['price'])
+                    # print(formated_message)
                     send_message(task["tgBotKey"], task["tgChannelId"], formatted_message)
         else:
-            print("Empty link for {}".format(itemId))
+            print("Empty link for {}".format(item_id))
