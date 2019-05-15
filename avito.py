@@ -77,7 +77,7 @@ def grab(task):
                 avito_record['price'] = item_price
                 message = check_record(db, avito_record)
                 if message is not None:
-                    if message['oldPrice'] is not None:
+                    if 'oldPrice' in message:
                         count_change += 1
                         formatted_message = "{}{} {} price: {} -> {}".format(message['icon'], message['message'],
                                                                              avito_record['link'],
