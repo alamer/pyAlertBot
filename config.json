@@ -5,8 +5,8 @@
       "tag": "Muravei avito",
       "module": "avito",
       "search": "/irkutskaya_oblast/mototsikly_i_mototehnika?q=муравей",
-      "tgChannelId": "-1001151061488",
-      "tgBotKey": "161936795:AAGV8rzW8-ibPCLuel1QGSVbDlP8pG8bX7M",
+      "tgChannelId": "",
+      "tgBotKey": "",
       "description": "Поиск муравья на авито",
       "database": "sqlite:///database.db"
     }
