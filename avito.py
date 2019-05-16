@@ -3,18 +3,22 @@ import requests
 from bs4 import BeautifulSoup
 from fake_useragent import UserAgent
 
-from tg import send_message
+from tg import Tg
 
 
 class Avito:
     """docstring"""
-
 
     def __init__(self, task):
         """Constructor"""
         self.__task = task  # protected
         # Инициализируем базу
         self.__db = self.__prepare_db(task["database"])
+        # Инициализируем бота для Telegram
+        if "proxy" in task:
+            self.__tg = Tg(task["tgBotKey"], task["proxy"])
+        else:
+            self.__tg = Tg(task["tgBotKey"])
 
     def __prepare_db(self, link):
         db = records.Database(link)
@@ -98,8 +102,8 @@ class Avito:
                                                                                                        avito_record[
                                                                                                            'link'],
                                                                                                        )
-                            print(formatted_message)
-                            send_message(task["tgBotKey"], task["tgChannelId"], formatted_message)
+                            #print(formatted_message)
+                            #self.__tg.send_message(task["tgChannelId"], formatted_message)
                         else:
                             count_new += 1
                             formatted_message = "{}{}  \n{}  \n💰 {}₽  \n🔗[Перейти]({})".format(message['icon'],
@@ -108,8 +112,8 @@ class Avito:
                                                                                                  avito_record['price'],
                                                                                                  avito_record['link'],
                                                                                                  )
-                            print(formatted_message)
-                            send_message(task["tgBotKey"], task["tgChannelId"], formatted_message)
+                            #print(formatted_message)
+                            #self.__tg.send_message(task["tgChannelId"], formatted_message)
             else:
                 print("Empty link for {}".format(item_id))
 
