@@ -4,6 +4,7 @@ import sys
 from multiprocessing.dummy import Pool as ThreadPool
 
 from avito import Avito
+from drom import Drom
 from youla import Youla
 
 
@@ -15,6 +16,9 @@ def grab(task):
     elif task["module"] == "youla":
         youla =Youla(task)
         youla.grab()
+    elif task["module"] == "drom":
+        drom =Drom(task)
+        drom.grab()
     else:
         print("Module {} not found.".format(task["module"]))
 
