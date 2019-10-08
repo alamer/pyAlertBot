@@ -57,6 +57,9 @@ class Avito:
                 res = None
         return res
 
+    def __getText(self, parent):
+        return ''.join(parent.find_all(text=True, recursive=False)).strip()
+
     def grab(self):
         ua = UserAgent()
         header = {'User-Agent': str(ua.chrome), 'Accept-Encoding': 'utf-8'}
@@ -78,7 +81,7 @@ class Avito:
                 price_tag = mainItemDiv.find('span', 'price')
                 if price_tag is not None:
                     item_name = href_tag.get('title')
-                    item_price = price_tag.get('content')
+                    item_price = self.__getText(price_tag)
                     # Нашли цену и url, можем писать в базу
                     count_all += 1
                     avito_record = dict()
@@ -102,8 +105,8 @@ class Avito:
                                                                                                        avito_record[
                                                                                                            'link'],
                                                                                                        )
-                            #print(formatted_message)
-                            #self.__tg.send_message(task["tgChannelId"], formatted_message)
+                            # print(formatted_message)
+                            # self.__tg.send_message(task["tgChannelId"], formatted_message)
                         else:
                             count_new += 1
                             formatted_message = "{}{}  \n{}  \n💰 {}₽  \n🔗[Перейти]({})".format(message['icon'],
@@ -112,8 +115,8 @@ class Avito:
                                                                                                  avito_record['price'],
                                                                                                  avito_record['link'],
                                                                                                  )
-                            #print(formatted_message)
-                            #self.__tg.send_message(task["tgChannelId"], formatted_message)
+                            # print(formatted_message)
+                            # self.__tg.send_message(task["tgChannelId"], formatted_message)
             else:
                 print("Empty link for {}".format(item_id))
 
