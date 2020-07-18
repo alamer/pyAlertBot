@@ -1,11 +1,9 @@
 #  -*- coding: utf-8 -*-
-import re
-
 import records
 import requests
 from bs4 import BeautifulSoup
 from fake_useragent import UserAgent
-
+import re
 from tg import Tg
 
 
@@ -69,14 +67,14 @@ class Drom:
         result = requests.get(search_url, headers=header)
         content = result.content
         soup = BeautifulSoup(content, "html.parser")
-        main_item_div_list = soup.find_all('a', "b-advItem")
+        main_item_div_list = soup.find_all('a', "css-lbefi")
         count_all = 0
         count_new = 0
         count_change = 0
         for mainItemDiv in main_item_div_list:
             item_link = mainItemDiv.get('href')
-            title_tag = mainItemDiv.find('div', 'b-advItem__title')
-            price_tag = mainItemDiv.find('div', 'b-advItem__price')
+            title_tag = mainItemDiv.find('span', attrs={"data-ftid": "bull_title"})
+            price_tag = mainItemDiv.find('span', attrs={"data-ftid": "bull_price"})
             item_name = title_tag.text
             item_price = self.__getText(price_tag)
             item_price = re.sub(r"[^0-9]", '', item_price)

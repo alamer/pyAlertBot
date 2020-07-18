@@ -57,7 +57,7 @@ class Avito:
                 res = None
         return res
 
-    def __getText(self, parent):
+    def __getText(self,parent):
         return ''.join(parent.find_all(text=True, recursive=False)).strip()
 
     def grab(self):
@@ -69,6 +69,7 @@ class Avito:
         search_url = task["search"]
         result = requests.get(base_url + search_url, headers=header)
         content = result.content
+        print(content)
         soup = BeautifulSoup(content, "html.parser")
         main_item_div_list = soup.find_all('div', "item")
         count_all = 0
@@ -76,12 +77,12 @@ class Avito:
         count_change = 0
         for mainItemDiv in main_item_div_list:
             item_id = mainItemDiv['id']
-            href_tag = mainItemDiv.find('a', 'item-description-title-link')
+            href_tag = mainItemDiv.find('a', 'snippet-link')
             if href_tag is not None:
-                price_tag = mainItemDiv.find('span', 'price')
+                price_tag = mainItemDiv.find('span', 'snippet-price')
                 if price_tag is not None:
                     item_name = href_tag.get('title')
-                    item_price = self.__getText(price_tag)
+                    item_price = self.__getText(price_tag) #price_tag.get('content')
                     # Нашли цену и url, можем писать в базу
                     count_all += 1
                     avito_record = dict()
@@ -89,7 +90,7 @@ class Avito:
                     avito_record['id'] = item_id
                     item_link = base_url + href_tag.get('href')
                     avito_record['link'] = item_link
-                    avito_record['price'] = item_price
+                    avito_record['price'] = item_price.replace(' ','')
                     message = self.__check_record(avito_record)
                     if message is not None:
                         if 'oldPrice' in message:
@@ -105,8 +106,8 @@ class Avito:
                                                                                                        avito_record[
                                                                                                            'link'],
                                                                                                        )
-                            # print(formatted_message)
-                            # self.__tg.send_message(task["tgChannelId"], formatted_message)
+                            print(formatted_message)
+                            self.__tg.send_message(task["tgChannelId"], formatted_message)
                         else:
                             count_new += 1
                             formatted_message = "{}{}  \n{}  \n💰 {}₽  \n🔗[Перейти]({})".format(message['icon'],
@@ -115,8 +116,8 @@ class Avito:
                                                                                                  avito_record['price'],
                                                                                                  avito_record['link'],
                                                                                                  )
-                            # print(formatted_message)
-                            # self.__tg.send_message(task["tgChannelId"], formatted_message)
+                            print(formatted_message)
+                            self.__tg.send_message(task["tgChannelId"], formatted_message)
             else:
                 print("Empty link for {}".format(item_id))
 
