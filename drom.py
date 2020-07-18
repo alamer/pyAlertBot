@@ -67,7 +67,7 @@ class Drom:
         result = requests.get(search_url, headers=header)
         content = result.content
         soup = BeautifulSoup(content, "html.parser")
-        main_item_div_list = soup.find_all('a', "css-lbefi")
+        main_item_div_list = soup.find_all('a', attrs={"data-ftid": "bulls-list_bull"})
         count_all = 0
         count_new = 0
         count_change = 0
