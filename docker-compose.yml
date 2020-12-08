@@ -1,0 +1,13 @@
+version: "2"
+services:
+  pyalertbot:
+    build: .
+    volumes:
+      - ${PWD}/db:/app/db/
+      - ${PWD}/config.json:/app/config.json
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "512k"
+        max-file: "100"
+    mem_limit: 256m
